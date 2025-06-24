@@ -7,7 +7,7 @@ st.title("📊 Sales Dashboard Prototype")
 st.markdown("Built by **Timerio** | Powered by Data")
 
 # Load refined data
-df = pd.read_excel("refined_dashboard_data.xlsx")
+df = pd.read_excel("refined_dashboard_data_fixed.xlsx")
 
 # Rename for readability
 df.columns = ['Branch', 'Month', 'Department', 'Revenue', 'Footfall', 'Month_dt', 'Revenue_fmt']
