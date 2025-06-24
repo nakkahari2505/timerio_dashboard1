@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 # Title and header
-st.title("📊 Business Update for Praveen Sir")
+st.title("Business Trends for Praveen Sir")
 st.markdown("Built by **Timerio** | Powered by Data")
 
 # Load refined Excel file
