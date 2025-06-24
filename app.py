@@ -27,16 +27,8 @@ fig_rev.update_traces(textposition="top center")
 fig_rev.update_layout(yaxis_title='Revenue (₹ Lakhs)', xaxis_title='Month')
 st.plotly_chart(fig_rev)
 
-# === 2. Monthly Footfall Trend ===
-st.subheader(f"Monthly Footfall Trend - {branch}")
-monthly_footfall = filtered_df.groupby('Month_dt')['Footfall'].sum().reset_index()
-monthly_footfall['Month'] = monthly_footfall['Month_dt'].dt.strftime("%b '%y")
-fig_foot = px.line(monthly_footfall, x='Month', y='Footfall', markers=True, text='Footfall')
-fig_foot.update_traces(textposition="top center")
-fig_foot.update_layout(yaxis_title='Footfalls', xaxis_title='Month')
-st.plotly_chart(fig_foot)
 
-# === 3. Department vs Month Pivot (Footfall) ===
+# === 2. Department vs Month Pivot (Footfall) ===
 st.subheader(f"Department Footfall Pivot Table - {branch}")
 pivot_df = filtered_df.pivot_table(
     index='Department',
