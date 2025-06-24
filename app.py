@@ -23,13 +23,14 @@ st.subheader(f"Monthly Revenue Trend - {branch}")
 monthly_revenue = filtered_df.groupby('Month_dt')['Revenue'].sum().reset_index()
 monthly_revenue['Month'] = monthly_revenue['Month_dt'].dt.strftime("%b '%y")
 fig_rev = px.line(monthly_revenue, x='Month', y='Revenue', markers=True, text='Revenue')
-fig_rev.update_traces(textposition="top center")
+fig = px.line(df, x="Month_dt", y="Revenue_fmt", text="Revenue_fmt")
+fig.update_traces(mode="lines+markers+text", textposition="top center", texttemplate='%{y:.1f}')
 fig_rev.update_layout(yaxis_title='Revenue (₹ Lakhs)', xaxis_title='Month')
 st.plotly_chart(fig_rev)
 
 
 # === 2. Department vs Month Pivot (Footfall) ===
-st.subheader(f"Department Footfall Pivot Table - {branch}")
+st.subheader(f"Department wise Footfall Update - {branch}")
 
 # Create pivot with Month_dt for proper sort
 pivot_df = filtered_df.pivot_table(
