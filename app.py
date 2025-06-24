@@ -30,6 +30,8 @@ st.plotly_chart(fig_rev)
 
 # === 2. Department vs Month Pivot (Footfall) ===
 st.subheader(f"Department Footfall Pivot Table - {branch}")
+
+# Create pivot with Month_dt for proper sort
 pivot_df = filtered_df.pivot_table(
     index='Department',
     columns='Month_dt',
@@ -38,12 +40,10 @@ pivot_df = filtered_df.pivot_table(
     fill_value=0
 )
 
-# Format and sort month columns
-pivot_df.columns = [d.strftime("%b '%y") for d in sorted(pivot_df.columns)]
-pivot_df = pivot_df.reindex(sorted(pivot_df.columns), axis=1)
+# Sort month columns
+pivot_df = pivot_df[sorted(pivot_df.columns)]
+
+# Rename columns to formatted month names
+pivot_df.columns = [col.strftime("%b '%y") for col in pivot_df.columns]
 
 st.dataframe(pivot_df.style.format('{:,.0f}'))
-
-# Footer
-st.markdown("---")
-st.markdown("🧠 _Smart Insights. Simple Delivery. [Timerio.in](https://timerio.in)_")
