@@ -9,7 +9,7 @@ st.set_page_config(layout="wide")
 @st.cache_data
 def load_data():
     xls = pd.ExcelFile("Reference_File.xlsx")
-    revenue_df = xls.parse("Revenue and Footfall")
+    revenue_df = xls.parse("revenue and footfalls")
     modality_df = xls.parse("Modality counts")
     return revenue_df, modality_df
 
@@ -51,3 +51,20 @@ for i, val in enumerate(filtered_revenue["Footfall"]):
 ax2.set_xlabel("Month")
 ax2.set_ylabel("Footfalls")
 ax2.set_title("Month-wise Footfall")
+st.pyplot(fig2)
+
+# --- Modality Cross Tab ---
+st.subheader(f"Modality Count Table for {selected_branch}")
+pivot_table = pd.pivot_table(
+    filtered_modality,
+    values='Count',
+    index='Depart_Grouping_H',
+    columns='Month',
+    aggfunc='sum',
+    fill_value=0
+)
+
+# Format numbers with commas
+pivot_table = pivot_table.applymap(lambda x: f"{int(x):,}")
+
+st.dataframe(pivot_table)
