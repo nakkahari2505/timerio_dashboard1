@@ -1,38 +1,56 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import matplotlib.pyplot as plt
 
-# Load the data
-df = pd.read_excel("refined_dashboard_data_fixed.xlsx")
+# Load the Excel file
+@st.cache_data
+def load_data():
+    xls = pd.ExcelFile("Reference_File.xlsx")
+    revenue_df = xls.parse("revenue and footfalls")
+    modality_df = xls.parse("Modality counts")
+    return revenue_df, modality_df
 
-# Convert Month_dt to datetime
-df['Month_dt'] = pd.to_datetime(df['Month_dt'])
+revenue_df, modality_df = load_data()
 
-# Page title
-st.title("Branch Trends for Praveen Sir")
+# Sort months in correct chronological order
+month_order = ['Apr\'24', 'May\'24', 'Jun\'24', 'Jul\'24', 'Aug\'24', 'Sep\'24', 'Oct\'24', 'Nov\'24', 'Dec\'24', 'Jan\'25', 'Feb\'25', 'Mar\'25','Apr\'25','May\'25','Jun\'25']
+revenue_df['MMM\'YY'] = pd.Categorical(revenue_df["MMM'YY"], categories=month_order, ordered=True)
+modality_df['MMM\'YY'] = pd.Categorical(modality_df["MMM'YY"], categories=month_order, ordered=True)
 
-# Branch selection at top
-branches = df['Branch'].unique()
-selected_branch = st.selectbox("Select Branch", sorted(branches))
+# Sidebar/Top Dropdown
+branch_list = revenue_df["Branch Name"].unique()
+selected_branch = st.selectbox("Select Branch", branch_list)
 
 # Filtered data
-df_filtered = df[df['Branch'] == selected_branch].sort_values("Month_dt")
+filtered_revenue = revenue_df[revenue_df["Branch Name"] == selected_branch].sort_values("MMM'YY")
+filtered_modality = modality_df[modality_df["Branch Name"] == selected_branch]
 
-# Line chart - Revenue trend
-revenue_monthly = df_filtered.groupby("Month_dt")["Revenue"].sum().reset_index()
-fig_revenue = px.line(revenue_monthly, x="Month_dt", y="Revenue", markers=True, text="Revenue")
-fig_revenue.update_traces(textposition="top center", texttemplate='%{y:.1f}')
-fig_revenue.update_layout(title="Monthly Revenue Trend", yaxis_title="Revenue (₹ Lakhs)", xaxis_title="Month")
-st.plotly_chart(fig_revenue)
+# Revenue Trend
+st.subheader(f"Revenue Trend for {selected_branch}")
+fig1, ax1 = plt.subplots()
+ax1.plot(filtered_revenue["MMM'YY"], filtered_revenue["Revenue(in_Lakhs)"], marker='o')
+ax1.set_xlabel("Month")
+ax1.set_ylabel("Revenue (in Lakhs)")
+ax1.set_title("Month-wise Revenue")
+st.pyplot(fig1)
 
-# Pivot Table - Department vs Month for FOOTFALL
-pivot_df = df_filtered.pivot_table(index="Department", columns="Month_dt", values="Footfall", aggfunc="sum", fill_value=0)
+# Footfall Trend
+st.subheader(f"Footfall Trend for {selected_branch}")
+fig2, ax2 = plt.subplots()
+ax2.plot(filtered_revenue["MMM'YY"], filtered_revenue["Footfall"], color='orange', marker='o')
+ax2.set_xlabel("Month")
+ax2.set_ylabel("Footfall")
+ax2.set_title("Month-wise Footfall")
+st.pyplot(fig2)
 
-# Ensure months are sorted correctly
-pivot_df = pivot_df.reindex(sorted(pivot_df.columns), axis=1)
-
-# Rename columns for display
-pivot_df.columns = [col.strftime('%b %y') for col in pivot_df.columns]
-
-st.subheader("Department-wise Footfall by Month")
-st.dataframe(pivot_df.style.format("{:.0f}"))
+# Modality Count Cross Tab
+st.subheader(f"Modality Count Table for {selected_branch}")
+pivot_modality = pd.pivot_table(
+    filtered_modality,
+    values='Count',
+    index='Depart_Grouping_H',
+    columns='MMM\'YY',
+    aggfunc='sum',
+    fill_value=0
+)
+st.dataframe(pivot_modality)
