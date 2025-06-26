@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 @st.cache_data
 def load_data():
     xls = pd.ExcelFile("Reference_File.xlsx")
-    revenue_df = xls.parse("revenue and footfalls")
+    revenue_df = xls.parse("Revenue and Footfall")
     modality_df = xls.parse("Modality counts")
     return revenue_df, modality_df
 
