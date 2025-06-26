@@ -50,4 +50,4 @@ for i, val in enumerate(filtered_revenue["Footfall"]):
     ax2.text(i, val, f"{int(val)}", ha='center', va='bottom', fontsize=8)
 ax2.set_xlabel("Month")
 ax2.set_ylabel("Footfalls")
-ax2.set_title("Mon_
+ax2.set_title("Month-wise Footfall")
