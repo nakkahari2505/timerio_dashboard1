@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 def check_password():
     def password_entered():
-        if st.session_state["password"] == "YourSecretPassword":
+        if st.session_state["password"] == "vdc2025":
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # Clear the password
         else:
