@@ -2,6 +2,37 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+def check_password():
+    def password_entered():
+        if st.session_state["password"] == "YourSecretPassword":
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Clear the password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input
+        st.text_input(
+            "Enter password", type="password", on_change=password_entered, key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Wrong password
+        st.text_input(
+            "Enter password", type="password", on_change=password_entered, key="password"
+        )
+        st.error("😕 Password incorrect")
+        return False
+    else:
+        # Correct password
+        return True
+
+if check_password():
+    # Your real app goes here
+    st.title("Secure Sales Dashboard")
+    st.write("Welcome to the dashboard!")
+
+
 # Load the Excel file
 @st.cache_data
 def load_data():
